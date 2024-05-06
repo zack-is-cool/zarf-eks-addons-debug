@@ -1,0 +1,20 @@
+variables:
+  - name: TARGET_REPO
+    default: oci://ghcr.io/defenseunicorns/packages/narwhal-delivery-zarf-package-eks-addons
+  - name: PACKAGE_DIR
+    description: "The directory to build the packages in"
+    default: "build"
+
+tasks:
+  - name: publish
+    description: "Publish the zarf packages in the PACKAGE_DIR to the TARGET_REPO"
+    actions:
+      - description: publish the packages
+        cmd: |
+          set -e
+          for package in ${PACKAGE_DIR}/zarf-package*.tar.zst; do
+            ./uds zarf package publish ${package} ${TARGET_REPO}
+          done
+          if ${ZARF_PACKAGE_CLEANUP}; then
+            rm -f ${PACKAGE_DIR}/zarf-package*.tar.zst
+          fi

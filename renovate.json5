@@ -1,0 +1,105 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "baseBranches": ["main", "renovate-is-hard"],
+  "extends": [
+    // pull creds for registry1 from uds-common
+    "github>defenseunicorns/uds-common//config/renovate.json5:hostRules",
+    // "github>defenseunicorns/uds-common//config/renovate.json5:regexManagers",
+    // Tells Renovate to maintain one GitHub issue as the "dependency dashboard". See https://docs.renovatebot.com/key-concepts/dashboard
+    ":dependencyDashboard",
+    // Use semantic commit type fix for dependencies and chore for all others if semantic commits are in use. See https://docs.renovatebot.com/presets-default/#semanticprefixfixdepschoreothers
+    ":semanticPrefixFixDepsChoreOthers",
+    // Group all updates together. See https://docs.renovatebot.com/presets-group/#groupall
+    // Other less drastic groupings that may be of interest include: group:allNonMajor, group:recommended, group:monorepos
+    // "group:all",
+    // Apply crowd-sourced package replacement rules. See https://docs.renovatebot.com/presets-replacements/#replacementsall
+    "replacements:all",
+    // Apply crowd-sourced workarounds for known problems with packages. See https://docs.renovatebot.com/presets-workarounds/#workaroundsall
+    "workarounds:all"
+  ],
+  // If we don't specify a timezone then Renovate will use UTC
+  "timezone": "America/New_York",
+  // fires between 4 am and 5 am EST on mondays
+  "schedule": [
+    "after 4am and before 11am on Monday"
+  ],
+  // Using a value of "conflicted" means that Renovate will only rebase PRs if they are in a conflicted state. See https://docs.renovatebot.com/configuration-options/#rebasewhen
+  "rebaseWhen": "auto",
+  // Labels to set in Pull Request. See https://docs.renovatebot.com/configuration-options/#labels
+  "labels": [
+    "renovate"
+  ],
+  // Rate limit PRs to maximum x created per hour. 0 means no limit. See https://docs.renovatebot.com/configuration-options/#prhourlylimit
+  "prHourlyLimit": 1,
+  // Limit to a maximum of x concurrent branches/PRs. 0 means no limit. See https://docs.renovatebot.com/configuration-options/#prconcurrentlimit
+  "prConcurrentLimit": 1,
+  // Enable updates to the pre-commit-config.yaml file. See https://docs.renovatebot.com/modules/manager/pre-commit/
+  "pre-commit": {
+    "enabled": true
+  },
+  // "regexManagers": [
+  //   // Custom regex manager for the .env file that follows the pattern documented here: https://docs.renovatebot.com/modules/manager/regex/#advanced-capture
+  //   {
+  //     "fileMatch": ["^.env"],
+  //     "matchStrings": [
+  //       "datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\s.*?_VERSION=(?<currentValue>.*)\\s"
+  //     ],
+  //     "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver-coerced{{/if}}",
+  //     "extractVersionTemplate": "^v?(?<version>.*)$"
+  //   },
+  //   {
+  //     "fileMatch": ["zarf-config(-.+)?\\.ya?ml$"],
+  //     "matchStrings": [
+  //       "datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\s.*image_version: (?<currentValue>.*)\\s"
+  //     ],
+  //     "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}loose{{/if}}"
+  //   },
+  //   {
+  //     "fileMatch": ["zarf-config(-.+)?\\.ya?ml$"],
+  //     "matchStrings": [
+  //       "datasource=(?<datasource>.*?) depName=(?<depName>.*?)( registryUrl=(?<registryUrl>.*?))?( versioning=(?<versioning>.*?))?\\s.*chart_version: (?<currentValue>.*)\\s"
+  //     ],
+  //     "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}loose{{/if}}",
+  //     "registryUrlTemplate": "{{#if registryUrl}}{{{registryUrl}}}{{else}}{{/if}}"
+  //   }
+  // ],
+  "hostRules": [
+    {
+      "matchHost": "registry1.dso.mil",
+      "hostType": "docker",
+      "description": "Encrypted creds for registry1, scoped to this Github org using: https://github.com/renovatebot/renovate/blob/main/docs/usage/configuration-options.md#encrypted",
+      "encrypted": {
+        "username": "wcFMA/xDdHCJBTolAQ/+Nuyw+7OR3+zILSggteys7iK2Ov/KTzU3VHCAXKy6FBwcZhYDSdmf6A0JRGpBosER9aLPZMyFjRnICz92ZXXjPZlCj9MoDAgsRCysqJzFG+zQG2+jl8ooJpNJJ1PpWW4l/4UB1r2YvLhMXlJEB1VLZPkLpPb0PmkolUxAChdHV1M9pPcZIt4pbk/1hfxNGKU8m8vFzq78I/J4auYisIkrAlBVuQV/xopvSVRo1WIBLexg7kqAjBXwcq0GEOFBJfFEZTuyjJqVr/JPTHKOuA0fmnQR4hbfy2cmFrgSN319VXKP016G/C8AkV2re2YJGdZ7v9kHt4hCMhcwavo/9HSqWuKWEFbrlXJgCp9/zsxHsAOofyCKo6KbGI3FyC9YhCCP0R1hmIVX9K7mWh8DYx0NuZQAVaR0F77sfcsgFu0bjDrdAcMVm0Dhq0VL94oOdNyn0ZLsc9F3UNqsgOAcTd4Dz1KzhnhLBha6WFqzQa6J/UMLmF1LGNosk9VQtnLr5Sg6FsPqy3bk/2wGAjjrp2IBlT9Jd1Kr93gAg8APuZ/9axXGqxe7s4EcGAcnZld7gs7DOz2MOYjV11PtRWyj81y28kSXBGquZ7nooZp725T4oiW0wBEmAI4jCQHD7LV3fExwiw2K7INYvRFeYYahv9v7uF56e5yfZfns8kFT0UXVxnrSdgENlESmG+rWRvSHr1dkdhh2809QmmR7i5MBQNmOXo6qh3e7IoU4QQFyJNfp6qKk6rs8MG5Ano26Z7gUmkwaODrp3uCth8Yj6fN6HuNb2QQotzMPvSTarq2NmSgh2T0mLBkwcF9kjGy9pp8Xv5sHz3c0mqGkPYU",
+        "password": "wcFMA/xDdHCJBTolAQ//VGjwse+qxgVWlLQXEI98pwbjzzuNaWPc+493NBVc+FSiUxDeNZululYDu2fPbQb27HU5UFg8B/oPd91s1Ih4zFHjJmJGwV4114XnMAGBamwN7ts5fhY8b3zcBC22rc4gjmjJvnoKYtWk1d/wqIp1PlPkf/mzxtcgDEvhyWRkNW4FXY4lO7Fza7R2w7izM2dlTCZHG0Aaxcr4X/XDuPdY+xIUkCBjFgXQrTu05s6LYrC2J608oZs40NVWts9394Q/se1+DExi1yrrxRibZiPp1Swa1jkf5pDdrGERg4xmrxD30Q8i1pUNDW+5Ob9bTIEl9+u5xqNhO8+ZkqGMlIy9hw+0ulllq4XufkgF6t0l1l7+5iQaUrGu31Bdp/KN5GH/GaIllRS8hY2QLdZga4wOvEJ7sopkSzdgSxV5l0xdntQz5KDaZ0/pFqCjXQ5/l3mQTVutHRLGuC2Zi3vk9AaPAgXVuBZnlRcob8iuKuU4aO4+l3l0G+K7GnVr4Tu9dwsNL+sJnUwGpMmbcGCuKy6sstapN5iDACQUQ6W7GUb4KCBNFgR/306tGzv1VwHi4bF0EhybYqFALRSFcayNS8bV7vteacDyPA/lmnJIsYdVb0IlbetLIspQqF9NlIISxDSVLpBLl4+QpeQ18UQWKxmG9OMOYP3yVbv8y/wyiuUNnv/ScwFyNdUlIOKB7UMboLlrPISsEH+tnbfwCpJJ3MueiIUklzFy/mO+V85PwDd2q3TorAu3ifDET+j0OsXWme+GaDceQs9/alPyBDDfcEmQUOsfojsElwWmDDF4tJf+14QaNAKIQoOSqlgtDrjoS/h2Cg7dtCQ"
+      }
+    }
+  ],
+  "forkProcessing":"enabled",
+  "packageRules": [
+    {
+      "matchPackageNames": ["k8s.io/client-go"],
+      "allowedVersions": "<1.0.0"
+    },
+    {
+      "matchManagers": ["terraform"],
+      "matchDepTypes": ["module"],
+      "matchDatasources": ["github-tags", "git-tags"],
+      "versioning": "loose"
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "groupName": "Security Updates",
+    "schedule": [],
+    "dependencyDashboardApproval": false,
+    "minimumReleaseAge": null,
+    "rangeStrategy": "update-lockfile",
+    "commitMessageSuffix": "[SECURITY]",
+    "branchTopic": "{{{datasource}}}-{{{depName}}}-vulnerability",
+    "prCreation": "immediate",
+    "labels": ["security"],
+    "automerge": true,
+    "assignees": ["@defenseunicorns/delivery-aws-iac"]
+  },
+  "osvVulnerabilityAlerts": true
+}

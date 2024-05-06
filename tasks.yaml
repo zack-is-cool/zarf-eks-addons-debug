@@ -1,0 +1,67 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/defenseunicorns/uds-cli/main/tasks.schema.json
+includes:
+  - create: ./tasks/create.yaml
+  - deploy: ./tasks/deploy.yaml
+  - delete: ./tasks/delete.yaml
+  - publish: ./tasks/publish.yaml
+  - setup: ./tasks/setup/main.yaml
+  - vars: ./tasks/setup/vars.yaml
+
+variables:
+  - name: ENV_VAR_FILE
+    default: .env
+    type: file
+
+tasks:
+  # - name: set-preflight-env-vars
+  #   description: "Set environment variables"
+  #   actions:
+  #     - task: vars:convenience-vars
+  #     - task: vars:source-env-vars
+  #     - task: vars:set-runner-vars
+
+  # # setup environment for deployment
+  # ## k3d
+  # - name: setup-k3d-cluster
+  #   description: "Setup the cluster"
+  #   actions:
+  #     - task: set-preflight-env-vars
+  #     - task: setup:k3d-istio-bundle
+
+  # - name: delete-cluster
+  #   actions:
+  #     - task: delete:k3d-delete-cluster
+
+  - name: registry-login
+    actions:
+      - task: setup:registry-login
+        with:
+          registry: ${REGISTRY}
+          registryUsername: ${REGISTRY_USERNAME}
+          registryPassword: ${REGISTRY_PASSWORD}
+          registryRetryInterval: ${REGISTRY_RETRY_INTERVAL}
+
+  # Packages and bundles
+  ## zarf packages
+  ### create packages
+  - name: create-single-zarf-package
+    description: "Create single zarf with nested ./uds run command, specify the package name with the environment variable ${ZARF_PACKAGE_NAME}"
+    actions:
+      - task: create:create-single-zarf-package
+
+  - name: create-all-zarf-packages
+    description: "Create all zarf packages"
+    actions:
+      - task: create:create-all-zarf-packages
+
+  - name: create-and-publish-single-zarf-package-with-all-architectures
+    description: "Create and publish single zarf package, specify the package name with the environment variable ${ZARF_PACKAGE_NAME}"
+    actions:
+      - task: create:create-single-zarf-package-with-all-architectures
+      - task: publish:publish
+
+  - name: create-and-publish-all-zarf-packages-all-architectures
+    description: "Create and publish all zarf packages"
+    actions:
+      - task: create:create-all-zarf-packages-all-architectures
+      - task: publish:publish
